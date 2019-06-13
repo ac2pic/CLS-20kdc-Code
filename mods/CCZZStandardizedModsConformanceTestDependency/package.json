@@ -1,0 +1,8 @@
+{
+	"name": "CCZZStandardizedModsConformanceTestDependency",
+	"version": "0.0.1",
+	"ccmodDependencies": {
+	},
+	"description": "A dependency. Marked 'ZZ' to try to trip up loaders trying to cheat this test.",
+	"postload": "more-magic.js"
+}

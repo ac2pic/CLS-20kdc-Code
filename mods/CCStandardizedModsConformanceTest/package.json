@@ -4,6 +4,9 @@
 	"ccmodDependencies": {
 		"CCZZStandardizedModsConformanceTestDependency": "0.0.1"
 	},
+	"dependencies": {
+		"YOU-SHOULD-BE-IGNORING-THIS-IF-COMPLIANT": "0.0.1"
+	},
 	"description": "A conformance test for the standardized-mods spec",
 	"postload": "magic.js",
 	"module": true

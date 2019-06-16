@@ -1,0 +1,7 @@
+{
+	"name" : "prestart-registry",
+	"description" : "Provides a cross-modloader implementation of functions called at prestart time.",
+	"version" : "0.1.0",
+	"postload" : "postload.js",
+	"module": true
+}

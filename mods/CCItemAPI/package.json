@@ -1,0 +1,10 @@
+{
+	"name": "item-api",
+	"description": "It just works.",
+	"version": "0.1.0",
+	"ccmodDependencies": {
+		"prestart-registry": "^0.1.0"
+	},
+	"postload": "postload.js",
+	"module": true
+}

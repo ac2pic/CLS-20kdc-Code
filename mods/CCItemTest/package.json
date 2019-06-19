@@ -1,0 +1,11 @@
+{
+	"name": "CCItemTest",
+	"description": "I sure love me some weird items!",
+	"version": "0.1.0",
+	"ccmodDependencies": {
+		"prestart-registry": "^0.1.0",
+		"item-api": "^0.1.0"
+	},
+	"postload": "postload.js",
+	"module": true
+}

@@ -174,5 +174,32 @@ ig.PATCH_STEP["IMPORT"] = ig.PatchStepBase.extend({
 	}
 });
 
+ig.PATCH_STEP["INCLUDE"] = ig.PatchStepBase.extend({
+	src: null,
+	_wm: new ig.Config({
+		attributes: {
+			"src": {
+				_type: "String",
+				_info: "The filename of the JSON patch, such as awesome-patch.json"
+			}
+		}
+	}),
+	init: function (data) {
+		assertContent(data, "src");
+		this.src = data["src"];
+	},
+	start: function (stepData, success, error) {
+		$.ajax({
+			dataType: "json",
+			context: this,
+			url: stepData.root + this.src,
+			success: function (data) {
+				ig.PatchHelpers.executePatchSteps(stepData.root, data, stepData.object, success, error);
+			},
+			error: error
+		});
+	}
+});
+
 });
 

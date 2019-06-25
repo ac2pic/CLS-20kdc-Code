@@ -249,8 +249,9 @@ var appliers = {};
  * a: The object to modify
  * steps: The array of steps, fresh from the JSON
  * 'loader' has the signature:
- * loader(impurl, success(obj), failure(...)) -> void
- * (and can thus be asynchronous)
+ * loader(imp, impurl, success(obj), failure(...)) -> void
+ * Note: "imp", if true, retrieves the file from the game. Otherwise it's retrieved from a mod.
+ * This function is designed in an asynchronous fashion.
  */
 function patch(a, steps, loader, success, failure) {
 	var init = {
@@ -315,7 +316,7 @@ appliers["ADD_ARRAY_ELEMENT"] = function (state) {
 };
 
 appliers["IMPORT"] = function (state) {
-	state.loader(this["src"], (function (obj) {
+	state.loader(true, this["src"], (function (obj) {
 		for (var i = 0; i < this["path"].length; i++)
 			obj = obj[this["path"][i]];
 		if ("index" in this) {
@@ -324,6 +325,12 @@ appliers["IMPORT"] = function (state) {
 			photomerge(state.currentValue, obj);
 		}
 		state.advance();
+	}).bind(this), state.failure);
+};
+
+appliers["INCLUDE"] = function (state) {
+	state.loader(false, this["src"], (function (obj) {
+		patch(state.currentValue, obj, state.loader, state.advance, state.failure);
 	}).bind(this), state.failure);
 };
 

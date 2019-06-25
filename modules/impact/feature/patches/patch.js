@@ -13,8 +13,9 @@ ig.module(
 ig.PatchStepBase = ig.StepBase;
 ig.PATCH_STEP = {};
 ig.PatchHelpers = {
-	executePatchSteps: function (patchData, targetObject, success, error) {
+	executePatchSteps: function (root, patchData, targetObject, success, error) {
 		var stepData = {};
+		stepData.root = root;
 		stepData.stack = [];
 		stepData.object = targetObject;
 		function advance(step) {
@@ -61,7 +62,9 @@ $.ajax = function () {
 					dataType: "json",
 					url: patchURL,
 					success: function (patchObj) {
-						ig.PatchHelpers.executePatchSteps(patchObj, fileObj, function () {
+						// For now, this is the root:
+						var root = ig.root;
+						ig.PatchHelpers.executePatchSteps(root, patchObj, fileObj, function () {
 							return oldSuccess.call(settings.context, fileObj, oB, oC);
 						}, errorCallback);
 					},

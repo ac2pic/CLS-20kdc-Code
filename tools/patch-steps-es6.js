@@ -5,7 +5,7 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  */
 
-const defaultSettings = {
+export const defaultSettings = {
 	arrayTrulyDifferentThreshold: 0.5,
 	trulyDifferentThreshold: 0.5,
 	arrayLookahead: 8,
@@ -14,7 +14,7 @@ const defaultSettings = {
 	diffMulSameKey: 0.75
 };
 
-function photomerge(a, b) {
+export function photomerge(a, b) {
 	if (b.constructor === Object) {
 		for (var k in b)
 			a[photocopy(k)] = photocopy(b[k]);
@@ -27,7 +27,7 @@ function photomerge(a, b) {
 	return a;
 }
 
-function photocopy(o) {
+export function photocopy(o) {
 	if (o === void 0)
 		return o;
 	if (o.constructor === Array)
@@ -38,7 +38,7 @@ function photocopy(o) {
 }
 
 // 0: The same. 1: Different.
-function diffHeuristic(a, b, settings) {
+export function diffHeuristic(a, b, settings) {
 	if ((a === null) && (b === null))
 		return 0;
 	if ((a === null) || (b === null))
@@ -108,7 +108,7 @@ function diffHeuristic(a, b, settings) {
  * The actual implementation is different to this description, but follows the same rules.
  * Stack A and the output are the same.
  */
-function diffArrayHeuristic(a, b, settings) {
+export function diffArrayHeuristic(a, b, settings) {
 	const lookahead = settings.arrayLookahead;
 	var sublog = [];
 	var ia = 0;
@@ -155,14 +155,14 @@ function diffArrayHeuristic(a, b, settings) {
  * @param {*} [settings] Optional bunch of settings. May include "comment".
  * @return {*} Null if unpatchable (this'll never occur for an Object or Array), Array of JSON-ready Patch Steps otherwise
  */
-function diff(a, b, settings) {
+export function diff(a, b, settings) {
 	var trueSettings = photocopy(defaultSettings);
 	if (settings !== void 0)
 		photomerge(trueSettings, settings);
 	return diffInterior(a, b, trueSettings);
 }
 
-function diffCommentExpansion(a, b, element, settings) {
+export function diffCommentExpansion(a, b, element, settings) {
 	var bkcomment = settings.comment;
 	if (settings.comment !== void 0)
 		settings.comment = settings.comment + "." + element;
@@ -171,7 +171,7 @@ function diffCommentExpansion(a, b, element, settings) {
 	return log;
 }
 
-function diffInterior(a, b, settings) {
+export function diffInterior(a, b, settings) {
 	if ((a === null) && (b === null))
 		return [];
 	if ((a === null) || (b === null))
@@ -252,7 +252,7 @@ function diffInterior(a, b, settings) {
 
 // Custom extensions are registered here.
 // They are passed the state, and call state.advance() or state.failure() depending on how well it goes.
-var appliers = {};
+export const appliers = {};
 
 /*
  * a: The object to modify
@@ -262,7 +262,7 @@ var appliers = {};
  * Note: "imp", if true, retrieves the file from the game. Otherwise it's retrieved from a mod.
  * This function is designed in an asynchronous fashion.
  */
-function patch(a, steps, loader, success, failure) {
+export function patch(a, steps, loader, success, failure) {
 	var init = {
 		currentValue: a,
 		stack: [],
@@ -347,13 +347,3 @@ appliers["INCLUDE"] = function (state) {
 	}).bind(this), state.failure);
 };
 
-// --------------------
-
-module.exports = {
-	diff: diff,
-	patch: patch,
-	appliers: appliers,
-	photocopy: photocopy,
-	photomerge: photomerge,
-	defaultSettings: defaultSettings
-};

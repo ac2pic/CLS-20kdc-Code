@@ -263,6 +263,19 @@ var appliers = {};
  * This function is designed in an asynchronous fashion.
  */
 function patch(a, steps, loader, success, failure) {
+	if (steps.constructor === Object) {
+		// Standardized Mods specification
+		for (var k in steps) {
+			if ((steps[k].constructor === Object) && (a[k] !== void 0)) {
+				// Not actually async
+				patch(a, steps[k], loader, function () {}, function () {});
+			} else {
+				a[k] = steps[k];
+			}
+		}
+		success();
+		return;
+	}
 	var init = {
 		currentValue: a,
 		stack: [],

@@ -268,7 +268,7 @@ export function patch(a, steps, loader, success, failure) {
 		for (var k in steps) {
 			if ((steps[k].constructor === Object) && (a[k] !== void 0)) {
 				// Not actually async
-				patch(a, steps[k], loader, function () {}, function () {});
+				patch(a[k], steps[k], loader, function () {}, function () {});
 			} else {
 				a[k] = steps[k];
 			}

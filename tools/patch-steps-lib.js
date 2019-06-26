@@ -343,8 +343,9 @@ appliers["ADD_ARRAY_ELEMENT"] = function (state) {
 
 appliers["IMPORT"] = function (state) {
 	state.loader(true, this["src"], (function (obj) {
-		for (var i = 0; i < this["path"].length; i++)
-			obj = obj[this["path"][i]];
+		if ("path" in this)
+			for (var i = 0; i < this["path"].length; i++)
+				obj = obj[this["path"][i]];
 		if ("index" in this) {
 			state.currentValue[this["index"]] = photocopy(obj);
 		} else {

@@ -1,0 +1,41 @@
+{
+	"frequency": "ALWAYS",
+	"repeat": "REPEAT",
+	"condition": "!CCItemTest.gave-player-items",
+	"eventType": "CUTSCENE",
+	"overrideSideMessage": false,
+	"type": {
+		"type": "MAP_ENTERED"
+	},
+	"event": [
+		{
+			"type": "SHOW_CENTER_MSG",
+			"titleText": {"en_US": "CCItemTest's Additions", "langUid": 13371337},
+			"text": {
+				"en_US": "You'll be given the various items in CCItemTest. Check Key Items for a pointless object, Consumables for an edible book, Equipment for a helmet, and Pets for a pet. Your save will work fine in Vanilla, and these items will be preserved. To re-trigger this dialog & get more items, you'll need to deactivate the involved variable. Ask 20kdc about this.",
+				"langUid": 13371337
+			}
+		},
+		{
+			"type": "GIVE_ITEM",
+			"item": {"jsonINSTANCE": "customItem.CCItemTest-RedKey"},
+			"amount": 10
+		},
+		{
+			"type": "GIVE_ITEM",
+			"item": {"jsonINSTANCE": "customItem.CCItemTest-GreenKey"},
+			"amount": 10
+		},
+		{
+			"type": "GIVE_ITEM",
+			"item": {"jsonINSTANCE": "customItem.CCItemTest-BlueKey"},
+			"amount": 10
+		},
+		{
+			"type": "CHANGE_VAR_BOOL",
+			"changeType": "set",
+			"varName": "CCItemTest.gave-player-items",
+			"value": true
+		}
+	]
+}

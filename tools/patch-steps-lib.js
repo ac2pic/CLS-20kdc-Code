@@ -357,7 +357,7 @@ appliers["IMPORT"] = function (state) {
 
 appliers["INCLUDE"] = function (state) {
 	state.loader(false, this["src"], (function (obj) {
-		patch(state.currentValue, obj, state.loader, state.advance, state.failure);
+		patch(state.currentValue, obj, state.loader, state.advance.bind(state), state.failure);
 	}).bind(this), state.failure);
 };
 

@@ -1,0 +1,119 @@
+[
+    {
+        "type": "ENTER",
+        "index": "items"
+    },
+    {
+        "type": "ADD_ARRAY_ELEMENT",
+        "content": {
+            "name": {
+                "en_US": "Golden Key",
+                "langUid": 13371337
+            },
+            "description": {
+                "en_US": "Marked 'Z-01'. Used to be owned by a knight long ago.",
+                "langUid": 13371337
+            },
+            "type": "KEY",
+            "rarity": 0,
+			"cost": 1000,
+            "level": 1,
+            "icon": "item-key",
+            "order": 0,
+            "noTrack": true,
+            "customItem": "CCItemTest-RedKey"
+        }
+    },
+    {
+        "type": "ADD_ARRAY_ELEMENT",
+        "content": {
+            "name": {
+                "en_US": "Om-Nom-Nomicon",
+                "langUid": 13371337
+            },
+            "description": {
+                "en_US": "A sugar-paper and chocolate book. The contents are about health & safety.",
+                "langUid": 13371337
+            },
+            "type": "CONS",
+            "rarity": 0,
+			"cost": 1000,
+            "level": 1,
+            "icon": "item-items",
+            "time": 0,
+			"THE INCREDIBLY BORING COMMENT": "Very safe... *copies a few more heals* ...Very balanced.",
+            "stats": [
+                "HEAL-4",
+                "HEAL-4",
+                "HEAL-4",
+                "HEAL-4"
+            ],
+            "effect": {
+                "sheet": "drops",
+                "name": "healing"
+            },
+            "useSpeed": 2,
+            "order": 0,
+            "noTrack": true,
+            "customItem": "CCItemTest-GreenKey"
+        }
+    },
+    {
+        "type": "ADD_ARRAY_ELEMENT",
+        "content": {
+            "name": {
+                "en_US": "Cat Ears",
+                "langUid": 13371337
+            },
+            "description": {
+                "en_US": "Cute, yet deadly. A paradox, no?",
+                "langUid": 13371337
+            },
+            "type": "EQUIP",
+            "equipType": "HEAD",
+            "params": {
+                "hp": 9000,
+                "attack": 9000,
+                "defense": 9000,
+                "focus": 9000
+            },
+            "properties": {
+
+            },
+            "rarity": 0,
+			"cost": 1000,
+            "level": 99,
+            "icon": "item-helm",
+            "order": 0,
+            "noTrack": true,
+            "customItem": "CCItemTest-BlueKey"
+        }
+    },
+    {
+        "type": "ADD_ARRAY_ELEMENT",
+        "content": {
+            "name": {
+                "en_US": "Another Pet",
+                "langUid": 13371337
+            },
+            "description": {
+                "en_US": "I'm not a good artist. At least the ears are fluffy. - 20kdc",
+                "langUid": 13371337
+            },
+            "type": "TOGGLE",
+            "properties": {
+
+            },
+            "rarity": 0,
+			"cost": 1000,
+            "level": 1,
+            "icon": "item-toggle",
+            "order": 0,
+            "noTrack": true,
+            "customItem": "CCItemTest-Pet"
+        }
+    },
+    {
+        "type": "EXIT"
+    }
+]

@@ -87,7 +87,7 @@ registerPrestart(function () {
 			this.parent();
 			var psl = ig.database.get("playerSkins");
 			if (psl !== void 0)
-				for (k in psl)
+				for (var k in psl)
 					this.registerSkin(k, psl[k]);
 		}
 	});

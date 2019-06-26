@@ -1,0 +1,43 @@
+[
+    {
+        "type": "SET_KEY",
+        "index": "playerSkins",
+		"content": {
+			"CCItemTest-Hg": {
+				"id": "ccitemtest-pet-example",
+				"item": {"jsonINSTANCE": "customItem.CCItemTest-Pet"},
+				"autoAdd": true,
+				"type": "Pet",
+				"settings": {
+					"animSheet": "ccitemtest-pet-example",
+					"walkAnims": {"idle": "idle", "move": "move", "run": "move"}
+				}
+			}
+		}
+    },
+	{
+		"type": "ENTER",
+		"index": "toggle-sets"
+	},
+	{
+		"type": "ENTER",
+		"index": "pet"
+	},
+	{
+		"type": "ENTER",
+		"index": "items"
+	},
+	{
+		"type": "ADD_ARRAY_ELEMENT",
+		"content": {"jsonINSTANCE": "customItem.CCItemTest-Pet"}
+	},
+	{
+		"type": "EXIT"
+	},
+	{
+		"type": "EXIT"
+	},
+	{
+		"type": "EXIT"
+	}
+]

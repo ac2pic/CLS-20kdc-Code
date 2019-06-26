@@ -3,7 +3,7 @@
 	"description": "Testing menus.",
 	"version": "0.1.0",
 	"ccmodDependencies": {
-		"menu-api": "^0.1.0"
+		"menu-api": "^0.*"
 	},
 	"postload": "postload.js",
 	"module": true

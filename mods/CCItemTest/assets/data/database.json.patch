@@ -1,0 +1,18 @@
+[
+    {
+        "type": "INCLUDE",
+		"src": "assets/data/ccitemtest-database-hg.json.patch"
+    },
+	{
+		"type": "ENTER",
+		"index": "commonEvents"
+	},
+    {
+        "type": "IMPORT",
+        "index": "ccitemtest-alert-player",
+		"src": "ccitemtest-database-alert.json"
+    },
+	{
+		"type": "EXIT"
+	}
+]

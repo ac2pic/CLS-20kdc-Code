@@ -21,18 +21,18 @@ if (cmd === "diff") {
 } else if (cmd === "patch") {
 	var ja = JSON.parse(fs.readFileSync(process.argv[3]));
 	var jp = JSON.parse(fs.readFileSync(process.argv[4]));
-	psl.patch(ja, jp, function (inc, url, success, failure) {
-		fs.readFile(url, function (err, data) {
-			if (err) {
-				failure(err);
-			} else {
-				success(JSON.parse(data));
-			}
+	psl.patch(ja, jp, function (inc, url) {
+		return new Promise((success, failure) => {
+			fs.readFile(url, function (err, data) {
+				if (err) {
+					failure(err);
+				} else {
+					success(JSON.parse(data));
+				}
+			});
 		});
-	}, function () {
+	}).then(() => {
 		console.log(JSON.stringify(ja));
-	}, function (err) {
-		throw err;
 	});
 } else {
 	console.log("node difftool.js diff A B [comment]");

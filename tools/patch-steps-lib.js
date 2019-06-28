@@ -14,6 +14,13 @@ const defaultSettings = {
 	diffMulSameKey: 0.75
 };
 
+/**
+ * A generic merge function.
+ * NOTE: This should match Patch Steps specification.
+ * @param {any} a The value to merge into.
+ * @param {any} b The value to merge from.
+ * @returns {any} a
+ */
 function photomerge(a, b) {
 	if (b.constructor === Object) {
 		for (let k in b)
@@ -27,6 +34,11 @@ function photomerge(a, b) {
 	return a;
 }
 
+/**
+ * A generic copy function.
+ * @param {any} a The value to copy.
+ * @returns {any} copied value
+ */
 function photocopy(o) {
 	if (o === void 0)
 		return o;
@@ -37,7 +49,13 @@ function photocopy(o) {
 	return o;
 }
 
-// 0: The same. 1: Different.
+/**
+ * A difference heuristic.
+ * @param {any} a The first value to check.
+ * @param {any} b The second value to check.
+ * @param {any} settings The involved control settings.
+ * @returns {number} A difference value from 0 (same) to 1 (different).
+ */
 function diffHeuristic(a, b, settings) {
 	if ((a === null) && (b === null))
 		return 0;
@@ -147,13 +165,13 @@ function diffArrayHeuristic(a, b, settings) {
 	return sublog;
 }
 
-/*
+/**
  * Diffs two objects
  * 
  * @param {any} a The original value
  * @param {any} b The target value
  * @param {object} [settings] Optional bunch of settings. May include "comment".
- * @return {array<object>|null} Null if unpatchable (this'll never occur for an Object or Array), Array of JSON-ready Patch Steps otherwise
+ * @return {object[]|null} Null if unpatchable (this'll never occur for two Objects or two Arrays), Array of JSON-ready Patch Steps otherwise
  */
 function diff(a, b, settings) {
 	let trueSettings = photocopy(defaultSettings);
@@ -256,12 +274,10 @@ function diffInterior(a, b, settings) {
 const appliers = {};
 
 /*
- * a: The object to modify
- * steps: The array of steps, fresh from the JSON
- * 'loader' has the signature:
- * loader(imp: boolean, impurl: string) -> Promise<object>
- * Note: "imp", if true, retrieves the file from the game. Otherwise it's retrieved from a mod.
- * Returns a Promise.
+ * @param {any} a The object to modify
+ * @param {object|object[]} steps The patch, fresh from the JSON. Can be in legacy or Patch Steps format.
+ * @param {(fromGame: boolean, url: string) => Promise<any>} loader The loading function. If fromGame is true, the file is from the game (see IMPORT). If fromGame is not true, the file is from the mod (see INCLUDE).
+ * @return {Promise<void>} A Promise
  */
 async function patch(a, steps, loader) {
 	if (steps.constructor === Object) {
@@ -333,6 +349,11 @@ appliers["IMPORT"] = async function (state) {
 appliers["INCLUDE"] = async function (state) {
 	const includedSteps = await state.loader(false, this["src"]);
 	await patch(state.currentValue, includedSteps, state.loader);
+};
+
+appliers["INIT_KEY"] = async function (state) {
+	if (!(this["index"] in state.currentValue))
+		state.currentValue[this["index"]] = photocopy(this["content"]);
 };
 
 // --------------------

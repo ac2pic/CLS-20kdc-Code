@@ -201,5 +201,33 @@ ig.PATCH_STEP["INCLUDE"] = ig.PatchStepBase.extend({
 	}
 });
 
+ig.PATCH_STEP["INIT_KEY"] = ig.PatchStepBase.extend({
+	index: null,
+	content: void 0,
+	_wm: new ig.Config({
+		attributes: {
+			"index": {
+				_type: "String",
+				_info: "The index to set."
+			},
+			"content": {
+				_type: "Object", // Need to work out what this has to be. I don't have Cubic Weltmeister information and impact.js is not helpful.
+				_info: "The value to put at the index."
+			}
+		},
+	}),
+	init: function (data) {
+		assertContent(data, "index");
+		assertContent(data, "content");
+		this.index = data["index"];
+		this.content = data["content"];
+	},
+	start: function (stepData, success, error) {
+		if (!(this.index in stepData.object))
+			stepData.object[this.index] = ig.copy(this.content);
+		success();
+	}
+});
+
 });
 

@@ -1,20 +1,30 @@
 [
     {
-        "type": "SET_KEY",
+        "type": "INIT_KEY",
         "index": "playerSkins",
+		"content": {}
+	},
+	{
+		"type": "ENTER",
+		"index": "playerSkins"
+	},
+	{
+		"type": "SET_KEY",
+		"index": "CCItemTest-Hg",
 		"content": {
-			"CCItemTest-Hg": {
-				"id": "ccitemtest-pet-example",
-				"item": {"jsonINSTANCE": "customItem.CCItemTest-Pet"},
-				"autoAdd": true,
-				"type": "Pet",
-				"settings": {
-					"animSheet": "ccitemtest-pet-example",
-					"walkAnims": {"idle": "idle", "move": "move", "run": "move"}
-				}
+			"id": "ccitemtest-pet-example",
+			"item": {"jsonINSTANCE": "customItem.CCItemTest-Pet"},
+			"autoAdd": true,
+			"type": "Pet",
+			"settings": {
+				"animSheet": "ccitemtest-pet-example",
+				"walkAnims": {"idle": "idle", "move": "move", "run": "move"}
 			}
 		}
     },
+	{
+		"type": "EXIT"
+	},
 	{
 		"type": "ENTER",
 		"index": "toggle-sets"

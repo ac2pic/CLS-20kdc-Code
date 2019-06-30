@@ -16,7 +16,7 @@ const defaultSettings = {
 
 /**
  * A generic merge function.
- * NOTE: This should match Patch Steps specification.
+ * NOTE: This should match Patch Steps specification, specifically how IMPORT merging works.
  * @param {any} a The value to merge into.
  * @param {any} b The value to merge from.
  * @returns {any} a
@@ -332,8 +332,33 @@ appliers["ADD_ARRAY_ELEMENT"] = async function (state) {
 	}
 };
 
+function resolveUrl(url, opts = {}) {
+	const config = Object.assign({
+		fromGame: false,
+		url
+	}, opts);
+
+	try {
+		const decomposedUrl = new URL(url);
+		const protocol = decomposedUrl.protocol;
+		config.url = decomposedUrl.pathname;
+		
+		if (protocol === 'mod:') {
+			config.fromGame = false;
+		} else if (protocol === 'game:') {
+			config.fromGame = true;
+		}
+	} catch (e) {}
+
+	return config;
+}
+
 appliers["IMPORT"] = async function (state) {
-	let obj = await state.loader(true, this["src"]);
+	const {fromGame, url} = resolveUrl(this["src"], {
+		fromGame: true
+	});
+	
+	let obj = await state.loader(fromGame, url);
 
 	if ("path" in this)
 		for (let i = 0; i < this["path"].length; i++)
@@ -347,7 +372,11 @@ appliers["IMPORT"] = async function (state) {
 };
 
 appliers["INCLUDE"] = async function (state) {
-	const includedSteps = await state.loader(false, this["src"]);
+	const {fromGame, url} = resolveUrl(this["src"], {
+		fromGame: false
+	});
+
+	const includedSteps = await state.loader(frameGame, url);
 	await patch(state.currentValue, includedSteps, state.loader);
 };
 

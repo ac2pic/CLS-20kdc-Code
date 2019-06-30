@@ -1,0 +1,13 @@
+{
+	"CCItemTest-Hg": {
+		"id": "ccitemtest-pet-example",
+		"item": {"jsonINSTANCE": "customItem.CCItemTest-Pet"},
+		"autoAdd": true,
+		"type": "Pet",
+		"settings": {
+			"animSheet": "ccitemtest-pet-example",
+			"walkAnims": {"idle": "idle", "move": "move", "run": "move"}
+		}
+	}
+}
+

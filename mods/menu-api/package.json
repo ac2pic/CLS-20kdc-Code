@@ -2,9 +2,7 @@
 	"name": "menu-api",
 	"description": "Adds a menu to which mods can add their own buttons.",
 	"version": "0.1.0",
-	"ccmodDependencies": {
-		"prestart-registry": "^0.*"
-	},
 	"postload": "postload.js",
+	"prestart": "prestart.js",
 	"module": true
 }

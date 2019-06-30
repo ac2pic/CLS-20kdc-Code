@@ -1,8 +1,0 @@
-{
-	"name": "CCItemTest",
-	"description": "I sure love me some weird items!",
-	"version": "0.1.0",
-	"ccmodDependencies": {
-		"item-api": "^0.*"
-	}
-}

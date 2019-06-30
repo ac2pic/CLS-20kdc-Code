@@ -148,17 +148,3 @@ itemAPI.processSave = function (saving, json) {
 		itemAPI.storageProcessors[k](saving, json);
 };
 
-registerPrestart(function () {
-	ig.Storage.inject({
-		onLevelLoadStart: function () {
-            if (this.currentLoadFile)
-				window.itemAPI.processSave(false, this.currentLoadFile);
-			return this.parent.apply(this, arguments);
-		},
-		_saveState: function (a) {
-			this.parent.apply(this, arguments);
-			window.itemAPI.processSave(true, a);
-		}
-	});
-});
-

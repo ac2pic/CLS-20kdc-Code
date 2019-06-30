@@ -30,16 +30,4 @@ window.itemAPI = {
 	}
 };
 
-registerPrestart(function () {
-	// Load custom items.
-	sc.Inventory.inject({
-		onload: function (a) {
-			this.parent(a);
-			for (var i = 0; i < this.items.length; i++)
-				if (this.items[i])
-					window.itemAPI.onItemRegister(i);
-		}
-	});
-});
-
 export default window.itemAPI;

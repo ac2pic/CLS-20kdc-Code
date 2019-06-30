@@ -3,6 +3,10 @@
         "type": "INCLUDE",
 		"src": "assets/data/ccitemtest-database-hg.json.patch"
     },
+    {
+        "type": "INCLUDE",
+		"src": "game:data/ccitemtest-wow.json"
+    },
 	{
 		"type": "ENTER",
 		"index": "commonEvents"
@@ -10,7 +14,7 @@
     {
         "type": "IMPORT",
         "index": "ccitemtest-alert-player",
-		"src": "ccitemtest-database-alert.json"
+		"src": "mod:database-alert.json"
     },
 	{
 		"type": "EXIT"

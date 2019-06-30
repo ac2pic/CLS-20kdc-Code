@@ -5,7 +5,15 @@
  * You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
  */
 
+// This file assists mod creation with various tweaks.
 import itemAPI from './base.js';
-import {} from './storage.js';
-import {} from './assist.js';
+
+const oldItemAPIReg = itemAPI.onItemRegister;
+// Setup registration of JSON templates NOW in case anyone does weird timing stuff
+itemAPI.onItemRegister = function (id) {
+	var name = oldItemAPIReg.apply(this, arguments);
+	if (name !== null)
+		ig.jsonTemplate.register("customItem." + name, id);
+	return name;
+};
 

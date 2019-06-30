@@ -376,7 +376,7 @@ appliers["INCLUDE"] = async function (state) {
 		fromGame: false
 	});
 
-	const includedSteps = await state.loader(frameGame, url);
+	const includedSteps = await state.loader(fromGame, url);
 	await patch(state.currentValue, includedSteps, state.loader);
 };
 

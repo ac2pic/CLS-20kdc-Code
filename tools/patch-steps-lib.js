@@ -304,12 +304,21 @@ async function patch(a, steps, loader) {
 // -- Step Execution --
 
 appliers["ENTER"] = async function (state) {
-	state.stack.push(state.currentValue);
-	state.currentValue = state.currentValue[this["index"]];
+	let path = [this["index"]];
+	if (this["index"].constructor == Array)
+		path = this["index"];
+	for (let idx of path) {
+		state.stack.push(state.currentValue);
+		state.currentValue = state.currentValue[idx];
+	}
 };
 
 appliers["EXIT"] = async function (state) {
-	state.currentValue = state.stack.pop();
+	let count = 1;
+	if ("count" in this)
+		count = this["count"];
+	for (let i = 0; i < count; i++)
+		state.currentValue = state.stack.pop();
 };
 
 appliers["SET_KEY"] = async function (state) {

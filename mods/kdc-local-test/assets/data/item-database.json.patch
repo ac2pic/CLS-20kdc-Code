@@ -11,12 +11,12 @@
                 "langUid": 13371337
             },
             "description": {
-                "en_US": "Marked 'Z-01'. Used to be owned by a knight long ago.",
+                "en_US": {"jsonINSTANCE": "CCItemTest-DateMarkingAssistant"},
                 "langUid": 13371337
             },
             "type": "KEY",
             "rarity": 0,
-			"cost": 1000,
+            "cost": 1000,
             "level": 1,
             "icon": "item-key",
             "order": 0,
@@ -41,7 +41,7 @@
             "level": 1,
             "icon": "item-items",
             "time": 0,
-			"THE INCREDIBLY BORING COMMENT": "Very safe... *copies a few more heals* ...Very balanced.",
+            "THE INCREDIBLY BORING COMMENT": "Very safe... *copies a few more heals* ...Very balanced.",
             "stats": [
                 "HEAL-4",
                 "HEAL-4",

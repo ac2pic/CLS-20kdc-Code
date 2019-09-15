@@ -15,28 +15,3 @@ if (window.ig.modules["dom.ready"].loaded)
 if (window.ig.modules["impact.base.impact"].loaded)
 	throw new Error("CONFORMANCE: magic.js is a postload script, the modloader cheated");
 
-// This'll be the mechanism on which the "prestart mod" will be based
-ig.module(
-	"ccstandardizedmodsconformancetest"
-).requires(
-	"game.main"
-).defines(function () {
-
-const oldIgMain = ig.main;
-let confirmedConformance = false;
-ig.main = function () {
-	const image = new ig.Image("media/conformance-asset.png");
-	sc.TitleScreenButtonGui.inject({
-		updateDrawables: function (displayList) {
-			this.parent(displayList);
-			displayList.addGfx(image, 0, 0, 0, 0, 256, 256);
-			if (!confirmedConformance) {
-				confirmedConformance = true;
-				console.log("Conformance testing complete and successful. If you don't see this, the modloader failed.");
-			}
-		}
-	});
-	return oldIgMain.apply(this, arguments);
-};
-
-})

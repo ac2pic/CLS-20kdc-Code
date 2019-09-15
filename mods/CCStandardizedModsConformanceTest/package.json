@@ -9,5 +9,6 @@
 	},
 	"description": "A conformance test for the standardized-mods spec",
 	"postload": "magic.js",
+	"prestart": "prestart.js",
 	"module": true
 }

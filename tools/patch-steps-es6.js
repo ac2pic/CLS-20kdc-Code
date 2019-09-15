@@ -2,11 +2,11 @@
  * patch-steps-lib - Library for the Patch Steps spec.
  *
  * Written starting in 2019.
- * Version: 1.0.1
+ * Version: 1.0.2
  * (Ideally, this would comply with semver.)
  * Credits:
  *  Main code by 20kdc
- *  URL-style file paths by ac2pic
+ *  URL-style file paths, bughunting by ac2pic
  *
  * To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide. This software is distributed without any warranty.
  * You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
@@ -290,11 +290,15 @@ export async function patch(a, steps, loader) {
 	if (steps.constructor === Object) {
 		// Standardized Mods specification
 		for (let k in steps) {
-			if ((steps[k].constructor === Object) && (a[k] !== void 0)) {
+			// Switched back to a literal translation in 1.0.2 to make it make sense with spec, it's more awkward but simpler.
+			// ac2pic thought up the "check for truthy" regarding steps[k].constructor
+			if (a[k] === void 0) {
+				a[k] = steps[k]; // 1.
+			} else if (steps[k] && (steps[k].constructor === Object)) {
 				// steps[k] is Object, so this won't escape the Standardized Mods version of patching
-				await patch(a[k], steps[k], loader);
+				await patch(a[k], steps[k], loader); // 2.
 			} else {
-				a[k] = steps[k];
+				a[k] = steps[k]; // 3.
 			}
 		}
 		return;

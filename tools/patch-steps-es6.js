@@ -325,13 +325,15 @@ export async function patch(a, steps, loader) {
 
 function printError(stack, errorMessage) {
 	let message = errorMessage + '\n';
+	if (stack.length%2 === 1) {
+		message += `\t\t\tin ${stack.pop()}\n`;
+	}
 	while(stack.length > 0) {
 		const stepIndex = stack.pop();
 		const stepName = stack.pop();
 		message += `\t\t\tat ${stepName} (step: ${stepIndex})\n`;
 	}
-	console.log(message);
-	
+	console.log(message);	
 }
 
 async function applyStep(step, state) {

@@ -348,7 +348,7 @@ async function applyStep(step, state) {
 
 /**
  * @param {object} obj The object to search and replace the values of
- * @param {RegExp| {[replacementId: string]: RegExp} keyword The expression to match against
+ * @param {RegExp| {[replacementId: string]: RegExp}} keyword The expression to match against
  * @param {String| {[replacementId]: string | number}} value The value the replace the match
  * @returns {void}
  * */ 

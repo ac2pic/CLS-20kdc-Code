@@ -306,15 +306,152 @@ export async function patch(a, steps, loader) {
 	const state = {
 		currentValue: a,
 		stack: [],
+		cloneMap: new Map(),
+		callStack: ["BASE"],
 		loader: loader
 	};
-	for (let index = 0; index < steps.length; index++)
-		await appliers[steps[index]["type"]].call(steps[index], state);
+	for (let index = 0; index < steps.length; index++) {
+		try {
+			state.callStack.push(index);
+			await applyStep(steps[index], state);
+			state.callStack.pop();			
+		} catch(e) {
+			printError(state.callStack, e.message);
+			console.error(e);
+			return;
+		}
+	}
+}
+
+function printError(stack, errorMessage) {
+	let message = errorMessage + '\n';
+	while(stack.length > 0) {
+		const stepIndex = stack.pop();
+		const stepName = stack.pop();
+		message += `\t\t\tat ${stepName} (step: ${stepIndex})\n`;
+	}
+	console.log(message);
+	
+}
+
+async function applyStep(step, state) {
+	state.callStack.push(step["type"]);
+	if (!appliers[step["type"]]) {
+		state.callStack.pop();
+		throw TypeError(`Error: ${step['type']} is not a valid type.`);
+	}
+	await appliers[step["type"]].call(step, state);
+	state.callStack.pop();
+}
+
+/**
+ * @param {object} obj The object to search and replace the values of
+ * @param {RegExp| {property: RegExp}} keyword The expression to match against
+ * @param {String| {property: String}} value The value the replace the match
+ * @returns {void}
+ * */ 
+function valueInsertion(obj, keyword, value) {
+	if (typeof obj === "string") {
+		// search for all instances of value and replace it 
+		let oldValue = obj[key];
+		
+		// It's more complex than we thought.
+		if (!Array.isArray(keyword) && typeof keyword === "object") {
+			// go through each and check if it matches anywhere.
+			for(const property in keyword) {
+				obj[key] = oldValue.replace(new RegExp(keyword[property], "g"), value[property]);
+				oldValue = obj[key];
+			}
+		} else {
+			obj[key] = oldValue.replace(new RegExp(keyword, "g"), value); 
+		}
+	} else if (Array.isArray(obj)) {
+		for (const child of obj[key]) {
+			valueInsertion(child, keyword, value);
+		}
+	} else if (typeof obj === "object") {
+		for(let key in obj) {
+			if (obj[key].constructor === Object) {
+				valueInsertion(obj[key], value);
+			}
+		}	
+	}
 }
 
 // -- Step Execution --
 
+
+appliers["FOR_IN"] = async function (state) {
+	const body = this["body"];
+	const values = this["values"];
+	const keyword = this["keyword"];
+	
+	for(let i = 0; i < values.length; i++) {
+		for (let statement, index = 0; index < body.length; index++) {
+			statement = body[index];
+			state.callStack.push(index);
+			const value = values[i];
+			const type = statement["type"];
+			const clone = photocopy(statement);
+			
+			valueInsertion(clone, keyword, value);
+			// to preserve type of statement
+			clone.type = type;
+			
+			await applyStep(clone, state);
+			state.callStack.pop();
+			
+		}
+	}
+};
+
+// copy the value with name
+appliers["COPY"] = async function(state) {
+	if (!this["alias"]) {
+		throw Error("Error: COPY requires 'alias'");
+	}
+	const value = photocopy(state.currentValue);
+	state.cloneMap.set(this["alias"], value);
+};
+
+// paste
+appliers["PASTE"] = async function(state) {
+	if (!this["alias"]) {
+		throw Error("Error: PASTE requires 'alias'");
+	}
+	const value = photocopy(state.cloneMap.get(this["alias"]));
+	if (Array.isArray(state.currentValue)) {
+		const obj = {
+			type: "ADD_ARRAY_ELEMENT",
+			content: value
+		};
+		
+		if (!isNaN(this["index"])) {
+			obj.index = this["index"];
+		}
+		await applyStep(obj, state);		
+		
+	} else if (typeof state.currentValue === "object") {
+		await applyStep({
+			type: "SET_KEY",
+			index: this["index"],
+			content: value
+		}, state);
+	} else {
+		throw `Error: Could not PASTE. Type ${typeof state.currentValue} is not supported.`;
+	}
+};
+
+
+appliers["COMMENT"] = async function(state) {
+	console.log(this["value"]);
+};
+
 appliers["ENTER"] = async function (state) {
+	if (!this["index"]) {
+		throw Error(`Error: Could not ENTER. Property index must be set.`);
+	}
+
 	let path = [this["index"]];
 	if (this["index"].constructor == Array)
 		path = this["index"];
@@ -404,3 +541,4 @@ appliers["INIT_KEY"] = async function (state) {
 	if (!(this["index"] in state.currentValue))
 		state.currentValue[this["index"]] = photocopy(this["content"]);
 };
+

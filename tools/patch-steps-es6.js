@@ -474,7 +474,7 @@ appliers["ENTER"] = async function (state) {
 		const idx = path[i];
 		state.stack.push(state.currentValue);
 		if (state.currentValue[idx] === undefined) {
-			const subArr = path.slice(0, idx);
+			const subArr = path.slice(0, idx - 1);
 			throw Error(`Error: index sequence ${subArr.join(",")} leads to an undefined state.`);
 		}
 		

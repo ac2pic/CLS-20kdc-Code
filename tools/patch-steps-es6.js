@@ -389,8 +389,8 @@ appliers["FOR_IN"] = async function (state) {
 	const keyword = this["keyword"];
 	
 	for(let i = 0; i < values.length; i++) {
-		for (let statement, index = 0; index < body.length; index++) {
-			statement = body[index];
+		for (index = 0; index < body.length; index++) {
+			const statement = body[index];
 			state.callStack.push(index);
 			const value = values[i];
 			const type = statement["type"];

@@ -361,8 +361,10 @@ function valueInsertion(obj, keyword, value) {
 		if (!Array.isArray(keyword) && typeof keyword === "object") {
 			// go through each and check if it matches anywhere.
 			for(const property in keyword) {
-				obj[key] = oldValue.replace(new RegExp(keyword[property], "g"), value[property]);
-				oldValue = obj[key];
+				if (keyword[property]) {
+					obj[key] = oldValue.replace(new RegExp(keyword[property], "g"), value[property] || "");
+					oldValue = obj[key];
+				}
 			}
 		} else {
 			obj[key] = oldValue.replace(new RegExp(keyword, "g"), value); 
@@ -387,7 +389,19 @@ appliers["FOR_IN"] = async function (state) {
 	const body = this["body"];
 	const values = this["values"];
 	const keyword = this["keyword"];
-	
+
+	if (!Array.isArray(body)) {
+		throw Error('Error: body must be an array.');
+	}
+
+	if (!values) {
+		throw Error('Error: values must be set.');
+	}
+
+	if (!keyword) {
+		throw Error('Error: keyword must be set.');
+	}
+
 	for(let i = 0; i < values.length; i++) {
 		for (index = 0; index < body.length; index++) {
 			const statement = body[index];
@@ -457,9 +471,16 @@ appliers["ENTER"] = async function (state) {
 	let path = [this["index"]];
 	if (this["index"].constructor == Array)
 		path = this["index"];
-	for (let idx of path) {
+	for (let i = 0; i < path.length;i++) {
+		const idx = path[i];
 		state.stack.push(state.currentValue);
+		if (state.currentValue[idx] === undefined) {
+			const subArr = path.slice(0, idx + 1);
+			throw Error(`Error: index sequence ${subArr.join(",")} leads to an undefined state.`);
+		}
+		
 		state.currentValue = state.currentValue[idx];
+		
 	}
 };
 
@@ -467,11 +488,20 @@ appliers["EXIT"] = async function (state) {
 	let count = 1;
 	if ("count" in this)
 		count = this["count"];
-	for (let i = 0; i < count; i++)
+	for (let i = 0; i < count; i++) {
+		if (state.stack.length === 0) {
+			throw Error(`Error: EXIT #${count + 1} leads to an undefined state.`);
+		}
 		state.currentValue = state.stack.pop();
+	}
+		
 };
 
 appliers["SET_KEY"] = async function (state) {
+	if (!this["index"]) {
+		throw Error('Error: index must be set.');
+	}
+
 	if ("content" in this) {
 		state.currentValue[this["index"]] = photocopy(this["content"]);
 	} else {
@@ -480,12 +510,22 @@ appliers["SET_KEY"] = async function (state) {
 };
 
 appliers["REMOVE_ARRAY_ELEMENT"] = async function (state) {
-	state.currentValue.splice(this["index"], 1);
+	const index = this["index"]%1;
+	if (isNaN(index)) {
+		throw Error('Error: index must be a finite number.');
+	}
+
+	state.currentValue.splice(index, 1);
 };
 
 appliers["ADD_ARRAY_ELEMENT"] = async function (state) {
 	if ("index" in this) {
-		state.currentValue.splice(this["index"], 0, photocopy(this["content"]));
+		const index = this["index"]%1;
+		if (isNaN(index)) {
+			throw Error('Error: index must be a finite number.');
+		}
+
+		state.currentValue.splice(index, 0, photocopy(this["content"]));
 	} else {
 		state.currentValue.push(photocopy(this["content"]));
 	}
@@ -513,16 +553,24 @@ function resolveUrl(url, opts = {}) {
 }
 
 appliers["IMPORT"] = async function (state) {
+	if (!this["src"]) {
+		throw Error('Error: src must be set.');
+	}
+
 	const {fromGame, url} = resolveUrl(this["src"], {
 		fromGame: true
 	});
 	
 	let obj = await state.loader(fromGame, url);
 
-	if ("path" in this)
+	if ("path" in this) {
+		if (!Array.isArray(this["path"])) {
+			throw Error('Error: path must be an array.');
+		}
 		for (let i = 0; i < this["path"].length; i++)
 			obj = obj[this["path"][i]];
-
+	}
+	
 	if ("index" in this) {
 		state.currentValue[this["index"]] = photocopy(obj);
 	} else {
@@ -531,6 +579,10 @@ appliers["IMPORT"] = async function (state) {
 };
 
 appliers["INCLUDE"] = async function (state) {
+	if (!this["src"]) {
+		throw Error('Error: src must be set.');
+	}
+
 	const {fromGame, url} = resolveUrl(this["src"], {
 		fromGame: false
 	});
@@ -540,6 +592,10 @@ appliers["INCLUDE"] = async function (state) {
 };
 
 appliers["INIT_KEY"] = async function (state) {
+	if (!this["index"]) {
+		throw Error('Error: index must be set.');
+	}
+
 	if (!(this["index"] in state.currentValue))
 		state.currentValue[this["index"]] = photocopy(this["content"]);
 };

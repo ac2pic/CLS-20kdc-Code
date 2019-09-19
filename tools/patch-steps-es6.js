@@ -327,7 +327,7 @@ export async function patch(a, steps, loader, filePath) {
 
 function printError(stack, errorMessage, filePath) {
 
-	let message = `File: ${filePath || 'Not specified'}\n${errorMessage} + '\n';
+	let message = `File: ${filePath || 'Not specified'}\n${errorMessage}\n`;
 	if (stack.length%2 === 1) {
 		message += `\t\t\tin ${stack.pop()}\n`;
 	}

@@ -403,7 +403,7 @@ appliers["FOR_IN"] = async function (state) {
 	}
 
 	for(let i = 0; i < values.length; i++) {
-		for (index = 0; index < body.length; index++) {
+		for (let index = 0; index < body.length; index++) {
 			const statement = body[index];
 			state.callStack.push(index);
 			const value = values[i];

@@ -11,8 +11,8 @@
 	{
 		"type": "FOR_IN",
 		"keyword": {
-			"item": "$$ITEM",
-			"skinName": "$$SKINNAME"
+			"item": "xxITEM",
+			"skinName": "xxSKINNAME"
 		},
 		"values": [
 			{
@@ -27,10 +27,10 @@
 			},
 			{
 				"type": "SET_KEY",
-				"index": "$$SKINNAME",
+				"index": "xxSKINNAME",
 				"content": {
-					"id": "$$SKINNAME",
-					"item": {"jsonINSTANCE": "customItem.$$ITEM"},
+					"id": "xxSKINNAME",
+					"item": {"jsonINSTANCE": "customItem.xxITEM"},
 					"autoAdd": true,
 					"type": "Pet",
 					"settings": {
@@ -45,23 +45,23 @@
 			},
 			{
 				"type": "ENTER",
-				"index": "$$SKINNAME"
+				"index": "xxSKINNAME"
 			},
 			{
 				"type": "COPY",
-				"index": "sk"
+				"alias": "sk"
 			},
 			{
 				"type": "EXIT"
 			},
 			{
 				"type": "SET_KEY",
-				"index": "$$SKINNAME"
+				"index": "xxSKINNAME"
 			},
 			{
 				"type": "PASTE",
 				"index": "sk",
-				"alias": "$$SKINNAME"
+				"alias": "xxSKINNAME"
 			},
 			{
 				"type": "COMMENT",
@@ -80,14 +80,14 @@
 			},
 			{
 				"type": "FOR_IN",
-				"keyword": "$$METAITEM",
+				"keyword": "xxMETAITEM",
 				"values": [
-					"$$ITEM"
+					"xxITEM"
 				],
 				"body": [
 					{
 						"type": "ADD_ARRAY_ELEMENT",
-						"content": {"jsonINSTANCE": "customItem.$$METAITEM"}
+						"content": {"jsonINSTANCE": "customItem.xxMETAITEM"}
 					}
 				]
 			},

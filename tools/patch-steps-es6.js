@@ -284,9 +284,10 @@ export const appliers = {};
  * @param {any} a The object to modify
  * @param {object|object[]} steps The patch, fresh from the JSON. Can be in legacy or Patch Steps format.
  * @param {(fromGame: boolean, url: string) => Promise<any>} loader The loading function. If fromGame is true, the file is from the game (see IMPORT). If fromGame is not true, the file is from the mod (see INCLUDE).
+ * @param {string} path to the Patch Sequence File.
  * @return {Promise<void>} A Promise
  */
-export async function patch(a, steps, loader) {
+export async function patch(a, steps, loader, filePath) {
 	if (steps.constructor === Object) {
 		// Standardized Mods specification
 		for (let k in steps) {
@@ -308,7 +309,8 @@ export async function patch(a, steps, loader) {
 		stack: [],
 		cloneMap: new Map(),
 		callStack: ["BASE"],
-		loader: loader
+		loader: loader,
+		filePath
 	};
 	for (let index = 0; index < steps.length; index++) {
 		try {
@@ -316,15 +318,16 @@ export async function patch(a, steps, loader) {
 			await applyStep(steps[index], state);
 			state.callStack.pop();			
 		} catch(e) {
-			printError(state.callStack, e.message);
+			printError(state.callStack, e.message, filePath);
 			console.error(e);
 			return;
 		}
 	}
 }
 
-function printError(stack, errorMessage) {
-	let message = errorMessage + '\n';
+function printError(stack, errorMessage, filePath) {
+
+	let message = `File: ${filePath || 'Not specified'}\n${errorMessage} + '\n';
 	if (stack.length%2 === 1) {
 		message += `\t\t\tin ${stack.pop()}\n`;
 	}
@@ -587,7 +590,7 @@ appliers["INCLUDE"] = async function (state) {
 	});
 
 	const includedSteps = await state.loader(fromGame, url);
-	await patch(state.currentValue, includedSteps, state.loader);
+	await patch(state.currentValue, includedSteps, state.loader, state.filePath);
 };
 
 appliers["INIT_KEY"] = async function (state) {

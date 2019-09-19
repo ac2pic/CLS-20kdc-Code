@@ -353,32 +353,32 @@ async function applyStep(step, state) {
  * @returns {void}
  * */ 
 function valueInsertion(obj, keyword, value) {
-	if (typeof obj === "string") {
-		// search for all instances of value and replace it 
-		let oldValue = obj[key];
 		
-		// It's more complex than we thought.
-		if (!Array.isArray(keyword) && typeof keyword === "object") {
-			// go through each and check if it matches anywhere.
-			for(const property in keyword) {
-				if (keyword[property]) {
-					obj[key] = oldValue.replace(new RegExp(keyword[property], "g"), value[property] || "");
-					oldValue = obj[key];
-				}
-			}
-		} else {
-			obj[key] = oldValue.replace(new RegExp(keyword, "g"), value); 
-		}
-	} else if (Array.isArray(obj)) {
-		for (const child of obj[key]) {
+	if (Array.isArray(obj)) {
+		for (const child of obj)
 			valueInsertion(child, keyword, value);
-		}
 	} else if (typeof obj === "object") {
 		for(let key in obj) {
-			if (obj[key].constructor === Object) {
-				valueInsertion(obj[key], value);
+			if (!obj[key])
+				continue;
+			if (typeof obj[key] === "string") {
+				let oldValue = obj[key];
+				// It's more complex than we thought.
+				if (!Array.isArray(keyword) && typeof keyword === "object") {
+					// go through each and check if it matches anywhere.
+					for(const property in keyword) {
+						if (keyword[property]) {
+							obj[key] = oldValue.replace(new RegExp(keyword[property], "g"), value[property] || "");
+							oldValue = obj[key];
+						}
+					}
+				} else {
+					obj[key] = oldValue.replace(new RegExp(keyword, "g"), value); 
+				}
+			} else {
+				valueInsertion(obj[key], keyword, value);
 			}
-		}	
+		}
 	}
 }
 
@@ -409,7 +409,6 @@ appliers["FOR_IN"] = async function (state) {
 			const value = values[i];
 			const type = statement["type"];
 			const clone = photocopy(statement);
-			
 			valueInsertion(clone, keyword, value);
 			// to preserve type of statement
 			clone.type = type;
@@ -475,7 +474,7 @@ appliers["ENTER"] = async function (state) {
 		const idx = path[i];
 		state.stack.push(state.currentValue);
 		if (state.currentValue[idx] === undefined) {
-			const subArr = path.slice(0, idx + 1);
+			const subArr = path.slice(0, idx);
 			throw Error(`Error: index sequence ${subArr.join(",")} leads to an undefined state.`);
 		}
 		

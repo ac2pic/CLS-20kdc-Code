@@ -348,8 +348,8 @@ async function applyStep(step, state) {
 
 /**
  * @param {object} obj The object to search and replace the values of
- * @param {RegExp| {property: RegExp}} keyword The expression to match against
- * @param {String| {property: String}} value The value the replace the match
+ * @param {RegExp| {[replacementId: string]: RegExp} keyword The expression to match against
+ * @param {String| {[replacementId]: string | number}} value The value the replace the match
  * @returns {void}
  * */ 
 function valueInsertion(obj, keyword, value) {

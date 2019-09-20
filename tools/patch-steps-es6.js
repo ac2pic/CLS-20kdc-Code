@@ -2,11 +2,11 @@
  * patch-steps-lib - Library for the Patch Steps spec.
  *
  * Written starting in 2019.
- * Version: 1.0.2
+ * Version: 1.1.0
  * (Ideally, this would comply with semver.)
  * Credits:
  *  Main code by 20kdc
- *  URL-style file paths, bughunting by ac2pic
+ *  URL-style file paths, FOR_IN, COPY, PASTE, error tracking, bughunting by ac2pic
  *
  * To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide. This software is distributed without any warranty.
  * You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
@@ -310,24 +310,25 @@ export async function patch(a, steps, loader, filePath) {
 		cloneMap: new Map(),
 		callStack: ["BASE"],
 		loader: loader,
-		filePath
+		filePath: []
 	};
+	state.filePath = state.filePath.concat(filePath);
 	for (let index = 0; index < steps.length; index++) {
 		try {
 			state.callStack.push(index);
 			await applyStep(steps[index], state);
 			state.callStack.pop();			
 		} catch(e) {
-			printError(state.callStack, e.message, filePath);
 			console.error(e);
+			printError(state.callStack, e.message, state.filePath);
 			return;
 		}
 	}
 }
 
-function printError(stack, errorMessage, filePath) {
-
-	let message = `File: ${filePath || 'Not specified'}\n${errorMessage}\n`;
+function printError(stack, errorMessage, filePaths) {
+	let message = filePaths.map((file) => `File: ${file}`).join('\n') + '\n';
+	message += `${errorMessage}\n`;
 	if (stack.length%2 === 1) {
 		message += `\t\t\tin ${stack.pop()}\n`;
 	}
@@ -349,6 +350,24 @@ async function applyStep(step, state) {
 	state.callStack.pop();
 }
 
+
+function replaceObjectProperty(object, key, keyword, value) {
+	
+	let oldValue = object[key];
+	// It's more complex than we thought.
+	if (!Array.isArray(keyword) && typeof keyword === "object") {
+		// go through each and check if it matches anywhere.
+		for(const property in keyword) {
+			if (keyword[property]) {
+				object[key] = oldValue.replace(new RegExp(keyword[property], "g"), value[property] || "");
+				oldValue = object[key];
+			}
+		}
+	} else {
+		object[key] = oldValue.replace(new RegExp(keyword, "g"), value); 
+	}
+}
+
 /**
  * @param {object} obj The object to search and replace the values of
  * @param {RegExp| {[replacementId: string]: RegExp}} keyword The expression to match against
@@ -358,26 +377,20 @@ async function applyStep(step, state) {
 function valueInsertion(obj, keyword, value) {
 		
 	if (Array.isArray(obj)) {
-		for (const child of obj)
-			valueInsertion(child, keyword, value);
+		for (let index = 0; index < obj.length; index++) {
+			const child = obj[index];
+			if (typeof child  === "string") {
+				replaceObjectProperty(obj, index, keyword, value);
+			} else if (typeof child === "object") {
+				valueInsertion(child, keyword, value);
+			}
+		}
 	} else if (typeof obj === "object") {
 		for(let key in obj) {
 			if (!obj[key])
 				continue;
 			if (typeof obj[key] === "string") {
-				let oldValue = obj[key];
-				// It's more complex than we thought.
-				if (!Array.isArray(keyword) && typeof keyword === "object") {
-					// go through each and check if it matches anywhere.
-					for(const property in keyword) {
-						if (keyword[property]) {
-							obj[key] = oldValue.replace(new RegExp(keyword[property], "g"), value[property] || "");
-							oldValue = obj[key];
-						}
-					}
-				} else {
-					obj[key] = oldValue.replace(new RegExp(keyword, "g"), value); 
-				}
+				replaceObjectProperty(obj, key, keyword, value);
 			} else {
 				valueInsertion(obj[key], keyword, value);
 			}
@@ -406,19 +419,15 @@ appliers["FOR_IN"] = async function (state) {
 	}
 
 	for(let i = 0; i < values.length; i++) {
-		for (let index = 0; index < body.length; index++) {
-			const statement = body[index];
+		const cloneBody = photocopy(body);
+		const value = values[i];
+		valueInsertion(cloneBody, keyword, value);
+		for (let index = 0; index < cloneBody.length; index++) {
+			const statement = cloneBody[index];
 			state.callStack.push(index);
-			const value = values[i];
 			const type = statement["type"];
-			const clone = photocopy(statement);
-			valueInsertion(clone, keyword, value);
-			// to preserve type of statement
-			clone.type = type;
-			
-			await applyStep(clone, state);
+			await applyStep(statement, state);
 			state.callStack.pop();
-			
 		}
 	}
 };
@@ -563,7 +572,7 @@ appliers["IMPORT"] = async function (state) {
 		fromGame: true
 	});
 	
-	let obj = await state.loader(fromGame, url);
+	let {data: obj} = await state.loader(fromGame, url);
 
 	if ("path" in this) {
 		if (!Array.isArray(this["path"])) {
@@ -589,8 +598,8 @@ appliers["INCLUDE"] = async function (state) {
 		fromGame: false
 	});
 
-	const includedSteps = await state.loader(fromGame, url);
-	await patch(state.currentValue, includedSteps, state.loader, state.filePath);
+	const {path, data} = await state.loader(fromGame, url);
+	await patch(state.currentValue, data, state.loader, state.filePath.concat([path]));
 };
 
 appliers["INIT_KEY"] = async function (state) {

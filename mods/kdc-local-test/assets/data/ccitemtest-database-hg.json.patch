@@ -1,30 +1,100 @@
 [
-    {
-        "type": "INIT_KEY",
-        "index": "playerSkins",
+	{
+		"type": "INIT_KEY",
+		"index": "playerSkins",
 		"content": {}
 	},
 	{
-		"type": "ENTER",
-		"index": "playerSkins"
-	},
-    {
-        "type": "IMPORT",
-		"src": "data/ccitemtest-hgps.json"
-    },
-	{
-		"type": "EXIT"
+		"type": "COMMENT",
+		"value": "Big FOR_IN for an 'arbitrary pet adding' sorta thing"
 	},
 	{
-		"type": "ENTER",
-		"index": ["toggle-sets", "pet", "items"]
-	},
-	{
-		"type": "ADD_ARRAY_ELEMENT",
-		"content": {"jsonINSTANCE": "customItem.CCItemTest-Pet"}
-	},
-	{
-		"type": "EXIT",
-		"count": 3
+		"type": "FOR_IN",
+		"keyword": {
+			"item": "xxITEM",
+			"skinName": "xxSKINNAME"
+		},
+		"values": [
+			{
+				"item": "CCItemTest-Pet",
+				"skinName": "CCItemTest-Hg"
+			}
+		],
+		"body": [
+			{
+				"type": "ENTER",
+				"index": "playerSkins"
+			},
+			{
+				"type": "SET_KEY",
+				"index": "xxSKINNAME",
+				"content": {
+					"id": "xxSKINNAME",
+					"item": {"jsonINSTANCE": "customItem.xxITEM"},
+					"autoAdd": true,
+					"type": "Pet",
+					"settings": {
+						"animSheet": "ccitemtest-pet-example",
+						"walkAnims": {"idle": "idle", "move": "move", "run": "move"}
+					}
+				}
+			},
+			{
+				"type": "COMMENT",
+				"value": "Copy/paste shenanigans"
+			},
+			{
+				"type": "ENTER",
+				"index": "xxSKINNAME"
+			},
+			{
+				"type": "COPY",
+				"alias": "sk"
+			},
+			{
+				"type": "EXIT"
+			},
+			{
+				"type": "SET_KEY",
+				"index": "xxSKINNAME"
+			},
+			{
+				"type": "PASTE",
+				"index": "sk",
+				"alias": "xxSKINNAME"
+			},
+			{
+				"type": "COMMENT",
+				"value": "done with player skins!"
+			},
+			{
+				"type": "EXIT"
+			},
+			{
+				"type": "ENTER",
+				"index": ["toggle-sets", "pet", "items"]
+			},
+			{
+				"type": "COMMENT",
+				"value": "Single FOR_IN to see if this is possible"
+			},
+			{
+				"type": "FOR_IN",
+				"keyword": "xxMETAITEM",
+				"values": [
+					"xxITEM"
+				],
+				"body": [
+					{
+						"type": "ADD_ARRAY_ELEMENT",
+						"content": {"jsonINSTANCE": "customItem.xxMETAITEM"}
+					}
+				]
+			},
+			{
+				"type": "EXIT",
+				"count": 3
+			}
+		]
 	}
 ]

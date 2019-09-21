@@ -283,7 +283,9 @@ export const appliers = {};
 /*
  * @param {any} a The object to modify
  * @param {object|object[]} steps The patch, fresh from the JSON. Can be in legacy or Patch Steps format.
- * @param {(fromGame: boolean, url: string) => Promise<any>} loader The loading function. If fromGame is true, the file is from the game (see IMPORT). If fromGame is not true, the file is from the mod (see INCLUDE).
+ * @param {(url: string) => Promise<any>} loader The loading function. 
+ * @param {(url: string, fromGame: boolean) => string} pathResolver If fromGame is true, the file is from the game (see IMPORT). If fromGame is not true, the file is from the mod (see INCLUDE).
+ * @param {ErrorHandler} errorHandler 
  * @param {string} path to the Patch Sequence File.
  * @return {Promise<void>} A Promise
  */
@@ -318,10 +320,9 @@ export async function patch(a, steps, loader, pathResolver, errorHandler) {
 			await applyStep(steps[index], state, errorHandler);		
 			errorHandler.removeLastLine();			
 		} catch(e) {
-			if (e === errorHandler) {
-				errorHandler.print();
-			} else {
-				console.log(e);
+			errorHandler.print();	
+			if (e !== errorHandler) {
+				console.error(e);
 			}
 			return;
 		}
@@ -543,9 +544,7 @@ appliers["IMPORT"] = async function (state) {
 		state.errorHandler.throwError('ValueError', 'src must be set.');
 	}
 
-	const url = state.pathResolver(this["src"], {
-		fromGame: true
-	});
+	const url = state.pathResolver(this["src"], true);
 	
 	const obj = await state.loader(url);
 
@@ -569,9 +568,7 @@ appliers["INCLUDE"] = async function (state) {
 		state.errorHandler.throwError('ValueError', 'src must be set.');
 	}
 
-	const url = state.pathResolver(this["src"], {
-		fromGame: false
-	});
+	const url = state.pathResolver(this["src"], false);
 
 	const data = await state.loader(url);
 	

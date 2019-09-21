@@ -28,7 +28,16 @@ export default class ErrorDisplayHandler {
 		});
 	}
 	removeLastStep() {
-		return this.currentFile.stack.pop();
+		const stack = this.currentFile.stack;
+		let currentStep = null;
+		for(let index = stack.length - 1; index >= 0; index--) {
+			if (stack[index].type === "Step") {
+				currentStep = stack[index];
+				stack.splice(index,1);
+				index = -1;
+			}
+		}
+		return currentStep;
 	}
 	
 	getLastStep() {

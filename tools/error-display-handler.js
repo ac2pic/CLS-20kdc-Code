@@ -33,7 +33,14 @@ export default class ErrorDisplayHandler {
 	
 	getLastStep() {
 		const stack = this.currentFile.stack;
-		return stack[stack.length - 1];
+		let currentStep = null;
+		for(let index = stack.length - 1; index >= 0; index--) {
+			if (stack[index].type === "Line") {
+				currentStep = stack[index];
+				index = -1;
+			}
+		}
+		return currentStep;
 	}
 	
 	throwError(type, message) {

@@ -22,7 +22,7 @@ export default class ErrorDisplayHandler {
 	
 	addStep(index, name = "") {
 		this.currentFile.stack.push({
-			type: "Line",
+			type: "Step",
 			index,
 			name
 		});
@@ -35,7 +35,7 @@ export default class ErrorDisplayHandler {
 		const stack = this.currentFile.stack;
 		let currentStep = null;
 		for(let index = stack.length - 1; index >= 0; index--) {
-			if (stack[index].type === "Line") {
+			if (stack[index].type === "Step") {
 				currentStep = stack[index];
 				index = -1;
 			}
@@ -62,7 +62,7 @@ export default class ErrorDisplayHandler {
 				case 'Error':
 					message += `${step.errorType}: ${step.errorMessage}\n`;
 				break;
-				case 'Line': {
+				case 'Step': {
 					message += '\t\t\tat ';
 					if (step.name) {
 						message += `${step.name} `; 

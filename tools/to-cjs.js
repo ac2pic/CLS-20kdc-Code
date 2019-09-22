@@ -8,12 +8,16 @@
 const fs = require("fs");
 
 const text = fs.readFileSync("patch-steps-es6.js", "utf8");
-console.log(text.replace(/export /g, ""));
-console.log("module.exports = {");
-console.log("\tdiff: diff,");
-console.log("\tpatch: patch,");
-console.log("\tappliers: appliers,");
-console.log("\tphotocopy: photocopy,");
-console.log("\tphotomerge: photomerge,");
-console.log("\tdefaultSettings: defaultSettings");
-console.log("};");
+const text2 = fs.readFileSync("error-display-handler.js", "utf8");
+fs.writeFileSync('patch-steps-lib.js',`
+${text.replace(/export /g, "")}
+${text2.replace(/export default /g, "")}
+module.exports = {
+	diff: diff,
+	patch: patch,
+	appliers: appliers,
+	photocopy: photocopy,
+	photomerge: photomerge,
+	defaultSettings: defaultSettings,
+	ErrorDisplayHandler: ErrorDisplayHandler
+};`);

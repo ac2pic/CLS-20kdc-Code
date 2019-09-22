@@ -8,10 +8,8 @@
 const fs = require("fs");
 
 const text = fs.readFileSync("patch-steps-es6.js", "utf8");
-const text2 = fs.readFileSync("error-display-handler.js", "utf8");
 fs.writeFileSync('patch-steps-lib.js',`
 ${text.replace(/export /g, "")}
-${text2.replace(/export default /g, "")}
 module.exports = {
 	diff: diff,
 	patch: patch,
@@ -19,5 +17,5 @@ module.exports = {
 	photocopy: photocopy,
 	photomerge: photomerge,
 	defaultSettings: defaultSettings,
-	ErrorDisplayHandler: ErrorDisplayHandler
+	DebugState: DebugState
 };`);

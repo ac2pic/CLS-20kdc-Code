@@ -22,8 +22,13 @@ if (cmd === "diff") {
 	var ja = JSON.parse(fs.readFileSync(process.argv[3]));
 	var jp = JSON.parse(fs.readFileSync(process.argv[4]));
 	psl.patch(ja, jp, function (inc, url) {
+		if (inc === false) {
+			inc = "mod";
+		} else if (inc === true) {
+			inc = "game";
+		}
 		return new Promise((success, failure) => {
-			fs.readFile(url, function (err, data) {
+			fs.readFile(inc + "." + url, function (err, data) {
 				if (err) {
 					failure(err);
 				} else {
